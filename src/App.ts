@@ -1,10 +1,9 @@
-import { ApolloServer, gql } from "apollo-server-express";
+import { ApolloServer } from "apollo-server-express";
 import dotenv from "dotenv";
 import express from "express";
 
-import http from "http";
-
-import * as router from "./routes/routes";
+import { resolvers } from "./graphql/resolvers";
+import { types } from "./graphql/schemas";
 
 dotenv.config();
 
@@ -22,24 +21,10 @@ app.use((req, res, next) => {
   next();
 });
 
-const typeDefs = gql`
-  type Query {
-    hello: String!
-  }
-`;
-
-const resolvers = {
-  Query: {
-    hello: () => "Hello Apollo TS!"
-  }
-};
-
 const apollo = new ApolloServer({
   resolvers,
-  typeDefs
+  typeDefs: types
 });
-
-const server = http.createServer(app);
 
 apollo.applyMiddleware({ app, path: "/" });
 app.listen(8080);
